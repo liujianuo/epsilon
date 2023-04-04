@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="TeleOpOne")
+@TeleOp(name="TensorFlow")
 public class Manualteleop extends OpMode {
     // Define all motors
     DcMotor rightback;
     DcMotor leftback;
-    DcMotor rightfront;s
+    DcMotor rightfront;
     DcMotor leftfront;
     DcMotor arm;
     Servo grip1;
@@ -61,21 +61,21 @@ public class Manualteleop extends OpMode {
         double x = 0.6*gamepad1.left_stick_y; // Variable for f/b motion
         double y = 0.6*gamepad1.left_stick_x; // Variable for r/l motion
         double rotation = -0.5*gamepad1.right_stick_x; // Variable for rotation around center
-        double armeth = -gamepad2.left_stick_y; // arm
-        double grip = (gamepad2.right_stick_x); //servo
+        double armeth = -gamepad2.right_stick_y; // arm
+        boolean grip = gamepad2.a; //servo
         double lf = 0; // Initial variables for power set to each wheel
         double lb = 0;
         double rf = 0;
         double rb = 0;
         
-        if(grip > 0.3){
-            grip1.setPosition(leftclosed);
-            grip2.setPosition(rightclosed);
+        if(grip){
+            grip1.setPosition(leftopen);
+            grip2.setPosition(rightopen);
             telemetry.addData("grip", "closed");
         }
         else{
-            grip1.setPosition(leftopen);
-            grip2.setPosition(rightopen);
+            grip1.setPosition(leftclosed);
+            grip2.setPosition(rightclosed);
             telemetry.addData("grip", "open");
         }
 
@@ -140,3 +140,15 @@ public class Manualteleop extends OpMode {
     }
 }
 
+
+if (tfod != null) {
+    tfod.activate();
+
+    // The TensorFlow software will scale the input images from the camera to a lower resolution.
+    // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+    // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
+    // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+    // should be set to the value of the images used to create the TensorFlow Object Detection model
+    // (typically 16/9).
+    tfod.setZoom(2.5, 16.0/9.0);
+}
